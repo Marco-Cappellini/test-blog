@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { deleteReply, getAllLiked, getAllPosts } from '../services/postsService';
+import { deleteReply, getAllLiked } from '../services/postsService';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { DarkModeContext } from '../darkModeContext';
 import Box from '@mui/material/Box';
@@ -18,6 +18,30 @@ import { checkIfLiked, dislikePost, likePost } from '../services/usersService';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
+async function initializeIsLiked(userId, posts) {
+    const tempIsLiked = {};
+    const allIds = new Set();
+
+    posts.forEach(post => {
+        allIds.add(post.id);
+        if (Array.isArray(post.reply)) {
+            post.reply.forEach(reply => allIds.add(reply.id));
+        }
+    });
+
+    for (const id of allIds) {
+        try {
+            const postStatus = await checkIfLiked({ userId, postId: id });
+            tempIsLiked[id] = postStatus.state;
+        } catch {
+            tempIsLiked[id] = false;
+        }
+    }
+
+    return (tempIsLiked);
+
+};
+
 
 export default function LikedPage() {
     const [darkModeContext] = React.useContext(DarkModeContext);
@@ -26,7 +50,7 @@ export default function LikedPage() {
     const [posts, setPosts] = React.useState([]);
     const navigate = useNavigate();
     const [search, setSearch] = React.useState("")
-    const [sessionStorageValue, setSessionStorageValue] =
+    const [sessionStorageValue] =
         UseSessionStorage('UserData', 'default');
 
     const handleChange = (event) => {
@@ -39,31 +63,6 @@ export default function LikedPage() {
         navigate(url, { replace: true });
     };
 
-    const initializeIsLiked = async (userId, posts) => {
-        const tempIsLiked = {};
-        const allIds = new Set();
-
-        posts.forEach(post => {
-            allIds.add(post.id);
-            if (Array.isArray(post.reply)) {
-                post.reply.forEach(reply => allIds.add(reply.id));
-            }
-        });
-
-        for (const id of allIds) {
-            try {
-                const postStatus = await checkIfLiked({ userId, postId: id });
-                tempIsLiked[id] = postStatus.state;
-            } catch {
-                tempIsLiked[id] = false;
-            }
-        }
-
-        setIsLiked(tempIsLiked);
-    };
-
-
-
     const { id: userId } = sessionStorageValue;
 
     React.useEffect(() => {
@@ -71,7 +70,13 @@ export default function LikedPage() {
             .then((receivedPosts) => {
                 console.log(receivedPosts);
                 setPosts(receivedPosts.posts);
-                initializeIsLiked(userId, receivedPosts.posts);
+                initializeIsLiked(userId, receivedPosts.posts)
+                    .then((isLiked) => {
+                        setIsLiked(isLiked);
+                    })
+                    .catch(() => {
+                        setIsLiked(false);
+                    });
             })
             .catch((error) => {
                 toast.error("Error during data gathering");
@@ -256,8 +261,8 @@ export default function LikedPage() {
                                     !search ||
                                         post.owner.toLowerCase().includes(search.toLowerCase()) ||
                                         post.content.toLowerCase().includes(search.toLowerCase()) ||
-                                        post.title.toLowerCase().includes(search.toLowerCase()) ||
-                                        post.reply.some((r) => (r.content.toLowerCase().includes(search.toLowerCase())))
+                                        post?.title?.toLowerCase()?.includes(search.toLowerCase()) ||
+                                        post?.reply?.some((r) => (r.content.toLowerCase().includes(search.toLowerCase())))
                                         ? "flex" : "none"
                             }}
                         >

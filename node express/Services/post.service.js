@@ -201,7 +201,7 @@ export function addLikeToReply(id) {
 }
 
 export function removeLikeFromPost(id) {
-    const post = posts.find(p => p.id === id);
+    const post = posts.find(p => p.id === id); //posts[id]
     if (post && post.likes > 0) {
         post.likes--;
         updatePostsJson();
@@ -226,9 +226,10 @@ export function getAllLikedByUser(userId) {
     for (let post of posts) {
         likedRepliesTemp = post.reply.filter(reply => user.liked.includes(reply.id));
         likedReplies = likedReplies.concat(likedRepliesTemp);
+
     }
     const likedPost = posts.filter(post => user.liked.includes(post.id));
-    const allLiked = likedPost.concat(likedReplies)
+    const allLiked = likedPost.concat(likedReplies.map((reply) => ({ ...reply, title: "Reply" })))
     if (allLiked.length > 0) {
         return allLiked;
     }

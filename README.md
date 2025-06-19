@@ -43,10 +43,9 @@ Before running the project, make sure you have:
 5. Start the server:
    ```bash
    node index.js
-6. Move back to the project and open the react section
+6. Create a new terminal and navigate to the react section
    ```bash
-   cd ../users-frontend
-   cd users-frontend
+   cd ./users-frontend/users-frontend
 7. Run the same code as before to install the dependencies:
    ```bash
    npm install
