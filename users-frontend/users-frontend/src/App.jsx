@@ -17,6 +17,7 @@ import { PostIdContext } from "./postIdContext.js";
 import Reply from "./components/replyToPost.jsx";
 import RepliesHistoryPage from "./components/repliesHistory.jsx";
 import LikedPage from "./components/likedPage.jsx";
+import { SWRConfig } from "swr";
 
 export default function App() {
   const [context, setContext] = useState(
@@ -32,28 +33,33 @@ export default function App() {
 
   const [postIdContext, stePostIdContext] = useState("")
   return (
-    <ThemeProvider theme={darkModeContext}>
-      <PostIdContext.Provider value={[postIdContext, stePostIdContext]}>
-        <DarkModeContext.Provider value={[darkModeContext, setdarkModeContext]}>
-          <Context.Provider value={[context, setContext]}>
-            <Routes>
-              <Route path="/" element={<SubscriptionForm />} />
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/updateUser" element={<UpdateUserForm />} />
-              <Route path="/usersData" element={<UsersDataGrid />} />
-              <Route path="/editById/:id" element={<EditUserForm />} />
-              <Route path="/userPage" element={<UserPage />} />
-              <Route path="/post" element={<PostCreation />} />
-              <Route path="/homePage" element={<HomePage />} />
-              <Route path="/reply/:id" element={<Reply />} />
-              <Route path="/repliesHistory" element={<RepliesHistoryPage />} />
-              <Route path="/allLiked" element={<LikedPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Context.Provider>
-        </DarkModeContext.Provider>
-      </PostIdContext.Provider>
-    </ThemeProvider>
+    <SWRConfig
+      value={{
+        fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
+      }}>
+      <ThemeProvider theme={darkModeContext}>
+        <PostIdContext.Provider value={[postIdContext, stePostIdContext]}>
+          <DarkModeContext.Provider value={[darkModeContext, setdarkModeContext]}>
+            <Context.Provider value={[context, setContext]}>
+              <Routes>
+                <Route path="/" element={<SubscriptionForm />} />
+                <Route path="/login" element={<LoginForm />} />
+                <Route path="/updateUser" element={<UpdateUserForm />} />
+                <Route path="/usersData" element={<UsersDataGrid />} />
+                <Route path="/editById/:id" element={<EditUserForm />} />
+                <Route path="/userPage" element={<UserPage />} />
+                <Route path="/post" element={<PostCreation />} />
+                <Route path="/homePage" element={<HomePage />} />
+                <Route path="/reply/:id" element={<Reply />} />
+                <Route path="/repliesHistory" element={<RepliesHistoryPage />} />
+                <Route path="/allLiked" element={<LikedPage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Context.Provider>
+          </DarkModeContext.Provider>
+        </PostIdContext.Provider>
+      </ThemeProvider>
+    </SWRConfig>
 
   );
 }

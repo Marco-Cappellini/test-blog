@@ -14,6 +14,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import useSWR from "swr";
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function UsersDataGrid() {
     const [theme] = useContext(DarkModeContext);
@@ -72,16 +75,27 @@ export default function UsersDataGrid() {
         handleClickOpen(id);
     }, [handleClickOpen]);
 
+    const { data } = useSWR(
+        "http://localhost:3000/api/users/",
+        fetcher
+    );
+
     useEffect(() => {
-        getAllUsers()
-            .then((users) => {
-                setUsers(users);
-            })
-            .catch((error) => {
-                toast.error("Error during data gathering");
-                console.error(error);
-            });
-    }, []);
+        if (data) {
+            setUsers(data);
+        } 
+
+        // getAllUsers()
+        //     .then((users) => {
+        //         setUsers(users);
+        //     })
+        //     .catch((error) => {
+        //         toast.error("Error during data gathering");
+        //         console.error(error);
+        //     });
+    }, [users, data]);
+
+
 
     const columns = [
         { field: "id", headerName: "ID", width: 290 },

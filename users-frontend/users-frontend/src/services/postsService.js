@@ -1,3 +1,5 @@
+import useSWR from "swr"
+
 export async function addPost(data) {
 
     const response = await fetch(
@@ -180,20 +182,11 @@ export async function getRepliesByOwner(id) {
     return message;
 }
 
-export async function getAllLiked(id) {
+export function useAllLiked(id) {
 
-    const response = await fetch(
-        `http://localhost:3000/api/posts/getAllLiked/${id}`,
-        {
-            method: 'GET'
-        }
+    const { data, mutate, error, isLoading } = useSWR(
+        `http://localhost:3000/api/posts/getAllLiked/${id}`
     );
 
-    const message = await response.json();
-
-    if (!response.ok) {
-        throw new Error(message.msg || "Errore sconosciuto");
-    }
-
-    return message;
+    return { data, mutate, isError: error, isLoading };
 }
