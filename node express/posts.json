@@ -6,7 +6,7 @@
 		"title": "Test 3 ",
 		"content": "aaaa",
 		"reply": [],
-		"likes": 2
+		"likes": 1
 	},
 	{
 		"id": "25ca8dce-2ead-4954-b898-80f801114542",
@@ -22,24 +22,6 @@
 				"content": "56h",
 				"isHidden": false,
 				"likes": 0
-			}
-		],
-		"likes": 2
-	},
-	{
-		"id": "0c1d9696-4cad-495c-b13f-2246c1eaddcf",
-		"owner": "TestManager1",
-		"date": "17/06/2025, 17:15",
-		"title": "essw",
-		"content": "qsxqw",
-		"reply": [
-			{
-				"id": "d8f9f473-4da9-4487-b3fc-c51965575f3d",
-				"owner": "TestManager1",
-				"date": "18/06/2025, 09:26",
-				"content": "vffff",
-				"isHidden": false,
-				"likes": 1
 			}
 		],
 		"likes": 1
