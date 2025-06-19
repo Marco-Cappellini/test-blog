@@ -12,17 +12,5 @@
 			"0c1d9696-4cad-495c-b13f-2246c1eaddcf",
 			"d8f9f473-4da9-4487-b3fc-c51965575f3d"
 		]
-	},
-	{
-		"id": "c02c30f5-0e54-49d8-9ca1-77a84c0da059",
-		"fullName": "User",
-		"email": "user01@orise.com",
-		"userName": "User01",
-		"password": "1a9ced1bb817a293d86538203967227031924217ad4152151f9b17b9c056dd6000db51ceba5467bf989ab03a79480ab4b2f1e8d84b5baf215e1a501823cdbb93",
-		"role": "employee",
-		"liked": [
-			"cdc3dd3b-3e22-4d74-b1e5-5ec40eaa67e2",
-			"25ca8dce-2ead-4954-b898-80f801114542"
-		]
 	}
 ]
