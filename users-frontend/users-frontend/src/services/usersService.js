@@ -3,7 +3,7 @@ import useSWR from "swr"
 export async function login(data) {
 
     const response = await fetch(
-        "http://localhost:3000/api/users/login",
+        `${import.meta.env.VITE_ENDPOINT}/api/users/login`,
         {
             method: 'POST',
             headers: {

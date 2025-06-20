@@ -23,35 +23,44 @@ Before running the project, make sure you have:
    ```bash
    git clone https://github.com/Marco-Cappellini/test-blog.git
    cd test-blog
-2. Move to the node section:
-    ```bash
-    cd node express
-3. Run this code to install the dependencies:
-   ```bash
-   npm install
-4. Setup environment variables:
-   Copy the example environment file to create your own `.env` file:
-
-    ```bash
-    cp .env.example .env
-    ````
-
-    On Windows Command Prompt, use:
-
-    ```cmd
-    copy .env.example .env
-5. Start the server:
-   ```bash
-   node index.js
-6. Create a new terminal and navigate to the react section
+2. Navigate to the react section
    ```bash
    cd ./users-frontend/users-frontend
-7. Run the same code as before to install the dependencies:
+3. install the dependencies:
    ```bash
    npm install
-8. Start the React frontend with Vite:   
+4. Build the project
+   ```bash
+   npm run build
+5. Navigate to the node section
+   ```bash
+   cd ..
+   cd ..
+   cd ./"node express"
+6. Create the webpage directory
+   ```bash
+   mkdir webpage
+7. Copy the build in webpage
+   ```bash
+   cd ..
+   mv ./users-frontend/users-frontend/dist/* ./"node express"/webpage/
+8. Return to the node section and insall the dependencies
+   ```bash
+   cd "node express"
+   npm install
+9.  Setup environment variables:
+   Copy the example environment file to create your own `.env` file:
     ```bash
-    npm run dev
+    cp .env.example .env
+    ```
+    ⚠ When filling the file be sure that the port is the same as the one in the .env of the frontend ⚠ 
+10. Start the project:
+   ```bash
+   node index.js
+   ```
+11. Open your browser and copy the fist page url <div>
+   By default it should be localhost:3000
+
 # Demo
 ### This is how the program should look like after you started it and clicked on the login button (bottom of the first page)
 <div>
