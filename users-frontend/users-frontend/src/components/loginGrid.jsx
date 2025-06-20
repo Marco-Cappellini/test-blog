@@ -58,7 +58,8 @@ export default function LoginForm() {
 
     // Ogni volta che sessionStorageValue cambia, resetto i valori del form
     useEffect(() => {
-        reset(sessionStorageValue);
+        if (sessionStorageValue)
+            reset(sessionStorageValue);
     }, [sessionStorageValue, reset]);
 
     const goToSubscription = useCallback(() => {

@@ -32,7 +32,7 @@ export default function UpdateUserForm() {
     const [showOldPassword, setShowOldPassword] = useState(false);
 
     const [sessionStorageValue, setSessionStorageValue] =
-        UseSessionStorage('UserData', 'default');
+        UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
 
     const {
         register,

@@ -15,7 +15,7 @@ export default function PostCreation() {
     const navigate = useNavigate();
     const { register, handleSubmit } = useForm();
     const [sessionStorageValue, setSessionStorageValue] =
-        UseSessionStorage('UserData', 'default');
+        UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
 
     const reciveSubmit = useCallback((data) => {
 

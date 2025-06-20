@@ -53,7 +53,7 @@ export default function LikedPage() {
     const navigate = useNavigate();
     const [search, setSearch] = React.useState("")
     const [sessionStorageValue] =
-        UseSessionStorage('UserData', 'default');
+        UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
 
     const handleChange = (event) => {
         setSearch(event.target.value);

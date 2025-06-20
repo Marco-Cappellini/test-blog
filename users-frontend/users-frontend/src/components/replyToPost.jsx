@@ -20,7 +20,7 @@ export default function Reply() {
     const { id } = useParams();
     const { register, handleSubmit } = useForm();
     const [sessionStorageValue] =
-        UseSessionStorage('UserData', 'default');
+        UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
 
     const { data, isError, isLoading } = usePostById(id);
 

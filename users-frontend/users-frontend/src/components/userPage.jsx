@@ -80,7 +80,7 @@ export default function UserPage() {
     }]);
     const navigate = useNavigate();
     const [sessionStorageValue, setSessionStorageValue] =
-        UseSessionStorage('UserData', 'default');
+        UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
     const [context, setContext] = React.useContext(Context)
     const [isLiked, setIsLiked] = React.useState({});
     // Sets the search value to whatever is typed in the text field
@@ -231,7 +231,8 @@ export default function UserPage() {
     // Defines the defaul user needed if the user deletes the account
     const defaultUser = {
         userName: "",
-        id: "", email: "",
+        id: "",
+        email: "",
         role: ""
     };
 

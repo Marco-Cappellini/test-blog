@@ -46,11 +46,13 @@ export async function getPostsByOwner(data) {
 
 export function useAllPosts() {
 
-    const { data, error, isLoading } = useSWR(
-        "http://localhost:3000/api/posts/allPosts"
+    const { data, mutate, error, isLoading } = useSWR(
+        "http://localhost:3000/api/posts/allPosts", {
+        refreshInterval: 1500
+    }
     );
 
-    return { data, isError: error, isLoading };
+    return { data, mutate, isError: error, isLoading };
 }
 
 export function usePostById(id) {
