@@ -1,6 +1,6 @@
-import { useContext, useEffect } from "react";
-import { getUserById, managerUpdate } from "../services/usersService.js";
-import { styled } from "@mui/material/styles";
+import { useContext, useMemo } from "react";
+import { managerUpdate, useUserById } from "../services/usersService.js";
+import { styled, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -15,6 +15,8 @@ import { useForm } from "react-hook-form";
 import { Bounce, toast, ToastContainer } from "react-toastify"
 import { useParams } from "react-router-dom";
 import { DarkModeContext } from "../darkModeContext.js";
+import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 
 
@@ -33,18 +35,6 @@ export default function EditUserForm() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [showNewPassword, setShowNewPassword] = useState(false);
-    const [user, setUser] = useState({
-        userName: "",
-        email: "",
-        fullName: "",
-        role: ""
-    })
-
-    const [theme] = useContext(DarkModeContext);
-    const goToUserPage = () => {
-        navigate("/userPage", { replace: true });
-    };
-
 
     const {
         register,
@@ -53,44 +43,40 @@ export default function EditUserForm() {
         setValue
     } = useForm();
 
-    useEffect(() => {
-        if (!user?.id || user?.id !== id) {
-            console.log(id);
-            getUserById(id)
-                .then((userData) => {
-                    toast.success(userData.msg || "User data loaded", {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                        transition: Bounce,
-                    });
+    const { data, mutate, isError, isLoading } = useUserById(id);
 
-                    setUser(userData.user);
-                    setValue("userName", userData.user.userName);
-                    setValue("email", userData.user.email);
-                    setValue("fullName", userData.user.fullName);
-                    setValue("role", userData.user.role);
-                })
-                .catch((error) => {
-                    toast.error("Error during data gathering");
-                    console.error(error);
-                });
-        }
-    }, [id, setValue, user?.id]);
+    const user = useMemo(() => {
+        console.log(data)
+        toast.success(data?.message || "User data loaded", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+        });
+        setValue("userName", data?.user?.userName);
+        setValue("email", data?.user?.email);
+        setValue("fullName", data?.user?.fullName);
+        setValue("role", data?.user?.role);
+        return data?.user
+    }, [data, setValue]);
 
+    const [theme] = useContext(DarkModeContext);
+    const goToUserPage = () => {
+        navigate("/userPage", { replace: true });
+    };
 
     const reciveSubmit = useCallback((data) => {
         const updatedData = {
-            oldUserName: user.userName,
-            userName: data.userName || user.userName,
-            email: data.email || user.email,
-            fullName: data.fullName || user.fullName,
-            password: data.password
+            oldUserName: user?.userName,
+            userName: data?.userName || user?.userName,
+            email: data?.email || user?.email,
+            fullName: data?.fullName || user?.fullName,
+            password: data?.password
         };
         console.log(updatedData)
         managerUpdate(updatedData)
@@ -108,8 +94,7 @@ export default function EditUserForm() {
                     theme: "colored",
                     transition: Bounce,
                 });
-
-                setUser(userUpdated.user);
+                mutate();
             })
             .catch((error) => {
                 const errorMessage = error.message || "Errore generico";
@@ -125,7 +110,7 @@ export default function EditUserForm() {
                     transition: Bounce,
                 });
             })
-    }, [user.userName, user.email, user.fullName]);
+    }, [user?.userName, user?.email, user?.fullName, mutate]);
 
     const goToLogin = () => {
         navigate("/login", { replace: true });
@@ -134,6 +119,24 @@ export default function EditUserForm() {
     const returnToGrid = useCallback(() => {
         navigate(("/usersData"), { replace: true });
     }, [navigate])
+
+
+    if (isError) {
+        return (
+            <ThemeProvider theme={theme}>
+                <Alert severity='error'>Failed to load posts.</Alert>
+            </ThemeProvider>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <ThemeProvider theme={theme}>
+                <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
 
     return (
         <Box
@@ -166,7 +169,7 @@ export default function EditUserForm() {
                                     fontSize: "1.5rem",
                                 }}
                             >
-                                UPDATING {user.userName}
+                                UPDATING {user?.userName}
                             </Item>
                         </Grid>
                         <Grid item>

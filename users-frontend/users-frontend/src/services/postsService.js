@@ -44,40 +44,22 @@ export async function getPostsByOwner(data) {
     return message;
 }
 
-export async function getAllPosts() {
+export function useAllPosts() {
 
-    const response = await fetch(
-        "http://localhost:3000/api/posts/allPosts",
-        {
-            method: 'GET'
-        }
+    const { data, error, isLoading } = useSWR(
+        "http://localhost:3000/api/posts/allPosts"
     );
 
-    const message = await response.json();
-
-    if (!response.ok) {
-        throw new Error(message.msg || "Errore sconosciuto");
-    }
-
-    return message;
+    return { data, isError: error, isLoading };
 }
 
-export async function getPostById(id) {
+export function usePostById(id) {
 
-    const response = await fetch(
-        `http://localhost:3000/api/posts/postById/${id}`,
-        {
-            method: 'GET'
-        }
+    const { data, mutate, error, isLoading } = useSWR(
+        `http://localhost:3000/api/posts/postById/${id}`
     );
 
-    const message = await response.json();
-
-    if (!response.ok) {
-        throw new Error(message.msg || "Errore sconosciuto");
-    }
-
-    return message;
+    return { data, mutate, isError: error, isLoading };
 }
 
 export async function addReply(data, id) {
@@ -164,22 +146,13 @@ export async function deleteReply(data) {
     return message;
 }
 
-export async function getRepliesByOwner(id) {
+export function useRepliesByOwner(id) {
 
-    const response = await fetch(
-        `http://localhost:3000/api/posts/getReplyByOwner/${id}`,
-        {
-            method: 'GET'
-        }
+    const { data, mutate, error, isLoading } = useSWR(
+        `http://localhost:3000/api/posts/getReplyByOwner/${id}`
     );
 
-    const message = await response.json();
-
-    if (!response.ok) {
-        throw new Error(message.msg || "Errore sconosciuto");
-    }
-
-    return message;
+    return { data, mutate, isError: error, isLoading };
 }
 
 export function useAllLiked(id) {

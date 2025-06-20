@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { addReply, getPostById } from '../services/postsService';
+import { addReply, usePostById } from '../services/postsService';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { DarkModeContext } from '../darkModeContext';
 import Box from '@mui/material/Box';
@@ -11,15 +11,22 @@ import { useForm } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
 import { UseSessionStorage } from './loginGrid';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 export default function Reply() {
     const [darkModeContext] = React.useContext(DarkModeContext);
-    const [post, setPost] = React.useState(null);
     const navigate = useNavigate();
     const { id } = useParams();
     const { register, handleSubmit } = useForm();
-    const [sessionStorageValue, setSessionStorageValue] =
+    const [sessionStorageValue] =
         UseSessionStorage('UserData', 'default');
+
+    const { data, isError, isLoading } = usePostById(id);
+
+    const post = React.useMemo(() => {
+        return data?.post
+    }, [data?.post]);
 
 
     const receiveSubmit = React.useCallback((data) => {
@@ -46,17 +53,22 @@ export default function Reply() {
             });
     }, [sessionStorageValue, navigate, id]);
 
-    React.useEffect(() => {
-        getPostById(id)
-            .then((receivedPost) => {
-                console.log(receivedPost);
-                setPost(receivedPost.post);
-            })
-            .catch((error) => {
-                toast.error("Error during data gathering");
-                console.error(error);
-            });
-    }, [id]);
+    if (isError) {
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <Alert severity='error'>Failed to load posts.</Alert>
+            </ThemeProvider>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
 
     return (
         <ThemeProvider theme={darkModeContext}>

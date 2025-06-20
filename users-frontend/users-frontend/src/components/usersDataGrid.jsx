@@ -1,9 +1,9 @@
 import Box from "@mui/material/Box";
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
 import { Bounce, toast, ToastContainer } from "react-toastify";
-import { deleteUser, getAllUsers } from "../services/usersService";
+import { deleteUser, useAllUsers } from "../services/usersService";
 import Typography from "@mui/material/Typography";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import EditIcon from '@mui/icons-material/Edit';
@@ -14,17 +14,24 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
-import useSWR from "swr";
+import { ThemeProvider } from "@emotion/react";
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function UsersDataGrid() {
     const [theme] = useContext(DarkModeContext);
     const [open, setOpen] = useState(false);
     const [idToDelete, setIdToDelete] = useState(null);
 
-    const [users, setUsers] = useState([]);
     const navigate = useNavigate();
+
+    const { data, mutate, isError, isLoading } = useAllUsers();
+
+    const users = useMemo(() => {
+        return data
+    }, [data]);
+
 
     const handleClickOpen = useCallback((id) => {
         setIdToDelete(id);
@@ -53,10 +60,7 @@ export default function UsersDataGrid() {
                     theme: "colored",
                     transition: Bounce,
                 });
-                return getAllUsers();
-            })
-            .then((users) => {
-                setUsers(users);
+                mutate();
             })
             .catch((error) => {
                 toast.error("Error during data gathering");
@@ -74,28 +78,6 @@ export default function UsersDataGrid() {
     const deleteFunction = useCallback((id) => {
         handleClickOpen(id);
     }, [handleClickOpen]);
-
-    const { data } = useSWR(
-        "http://localhost:3000/api/users/",
-        fetcher
-    );
-
-    useEffect(() => {
-        if (data) {
-            setUsers(data);
-        } 
-
-        // getAllUsers()
-        //     .then((users) => {
-        //         setUsers(users);
-        //     })
-        //     .catch((error) => {
-        //         toast.error("Error during data gathering");
-        //         console.error(error);
-        //     });
-    }, [users, data]);
-
-
 
     const columns = [
         { field: "id", headerName: "ID", width: 290 },
@@ -138,6 +120,23 @@ export default function UsersDataGrid() {
     const handleGoBack = useCallback(() => {
         navigate("/userPage", { replace: true });
     }, [navigate]);
+
+
+    if (isError) {
+        return (
+            <ThemeProvider theme={theme}>
+                <Alert severity='error'>Failed to load posts.</Alert>
+            </ThemeProvider>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <ThemeProvider theme={theme}>
+                <CircularProgress />
+            </ThemeProvider>
+        )
+    }
 
     return (
         <Box

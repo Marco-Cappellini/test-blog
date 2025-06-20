@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { deleteReply, getAllPosts } from '../services/postsService';
+import { deleteReply, useAllPosts } from '../services/postsService';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { DarkModeContext } from '../darkModeContext';
 import Box from '@mui/material/Box';
@@ -17,22 +17,18 @@ import DangerousIcon from '@mui/icons-material/Dangerous';
 import { checkIfLiked, dislikePost, likePost } from '../services/usersService';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
 
 export default function HomePage() {
     const [darkModeContext] = React.useContext(DarkModeContext);
     const [expandedPosts, setExpandedPosts] = React.useState({});
     const [isLiked, setIsLiked] = React.useState({});
-    const [posts, setPosts] = React.useState([{
-        id: "",
-        author: '',
-        date: '',
-        title: '',
-        content: ''
-    }]);
+
     const navigate = useNavigate();
     const [search, setSearch] = React.useState("")
-    const [sessionStorageValue, setSessionStorageValue] =
+    const [sessionStorageValue] =
         UseSessionStorage('UserData', 'default');
 
     const handleChange = (event) => {
@@ -44,6 +40,12 @@ export default function HomePage() {
         console.log(url);
         navigate(url, { replace: true });
     };
+
+    const { data, mutate, isError, isLoading } = useAllPosts();
+
+    const posts = React.useMemo(() => {
+        return data
+    }, [data]);
 
     const initializeIsLiked = async (userId, posts) => {
         const tempIsLiked = {};
@@ -83,40 +85,24 @@ export default function HomePage() {
         console.log(tempIsLiked);
         setIsLiked(tempIsLiked);
     };
-    ;
 
     const { id: userId } = sessionStorageValue;
 
     React.useEffect(() => {
-        getAllPosts()
-            .then((receivedPosts) => {
-                console.log(receivedPosts);
-                setPosts(receivedPosts);
-                initializeIsLiked(userId, receivedPosts);
-            })
-            .catch((error) => {
-                toast.error("Error during data gathering");
-                console.error(error);
-            });
-    }, [userId]);
+        initializeIsLiked(userId, data);
+    }, [data, userId]);
+
+
 
     const like = React.useCallback((postId) => {
-        // Logica per aggiungere like al post
         setIsLiked(prev => ({ ...prev, [postId]: true }));
         const data = {
-            userId: sessionStorageValue.id,
+            userId: userId,
             postId: postId
         }
         likePost(data)
             .then((response) => {
-                getAllPosts() // Fetches posts owned by the current user
-                    .then((receivedPosts) => {
-                        setPosts(receivedPosts); // Updates the post list
-                    })
-                    .catch((error) => {
-                        toast.error("Error during data gathering");
-                        console.error(error);
-                    });
+                mutate();
                 toast.success(response.msg, {
                     position: "top-right",
                     autoClose: 5000,
@@ -128,25 +114,18 @@ export default function HomePage() {
                 console.error(error);
                 toast.error(error);
             })
-    }, [sessionStorageValue.id])
+    }, [mutate, userId])
 
     const dislike = React.useCallback((postId) => {
         // Logica per aggiungere like al post
         setIsLiked(prev => ({ ...prev, [postId]: false }));
         const data = {
-            userId: sessionStorageValue.id,
+            userId: userId,
             postId: postId
         }
         dislikePost(data)
             .then((response) => {
-                getAllPosts()
-                    .then((receivedPosts) => {
-                        setPosts(receivedPosts); // Updates the post list
-                    })
-                    .catch((error) => {
-                        toast.error("Error during data gathering");
-                        console.error(error);
-                    });
+                mutate();
                 toast.success(response.msg, {
                     position: "top-right",
                     autoClose: 5000,
@@ -158,7 +137,7 @@ export default function HomePage() {
                 console.error(error);
                 toast.error(error);
             })
-    }, [sessionStorageValue.id])
+    }, [mutate, userId])
 
 
     const removeReply = React.useCallback((id, owner) => {
@@ -175,13 +154,31 @@ export default function HomePage() {
                     theme: "colored",
                     transition: Bounce,
                 });
-                setPosts(response.posts); // Updates the posts list with the newly fetched one
+                mutate(); // Updates the posts list with the newly fetched one
             })
             .catch((error) => {
                 console.error(error);
                 toast.error(error);
             })
-    }, [])
+    }, [mutate])
+
+
+    if (isError) {
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <Alert severity='error'>Failed to load posts.</Alert>
+            </ThemeProvider>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
 
     return (
         <ThemeProvider theme={darkModeContext}>

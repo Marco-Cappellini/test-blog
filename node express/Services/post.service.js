@@ -219,7 +219,7 @@ export function removeLikeFromReply(id) {
     }
 }
 
-export function getAllLiked(userId) {
+export function getAllLikedByUser(userId) {
     const user = getUserById(userId).user
     let likedReplies = []
     let likedRepliesTemp = []

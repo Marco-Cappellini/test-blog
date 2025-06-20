@@ -1,3 +1,5 @@
+import useSWR from "swr"
+
 export async function login(data) {
 
     const response = await fetch(
@@ -86,40 +88,22 @@ export async function subscribe(data) {
     return message;
 }
 
-export async function getAllUsers() {
+export function useAllUsers() {
 
-    const response = await fetch(
-        "http://localhost:3000/api/users/",
-        {
-            method: 'GET'
-        }
+    const { data, mutate, error, isLoading } = useSWR(
+        "http://localhost:3000/api/users/"
     );
 
-    const message = await response.json();
-
-    if (!response.ok) {
-        throw new Error(message.msg || "Errore sconosciuto");
-    }
-
-    return message;
+    return { data, mutate, isError: error, isLoading };
 }
 
-export async function getUserById(id) {
+export function useUserById(id) {
 
-    const response = await fetch(
-        `http://localhost:3000/api/users/${id}`,
-        {
-            method: 'GET'
-        }
+    const { data, mutate, error, isLoading } = useSWR(
+        `http://localhost:3000/api/users/${id}`
     );
 
-    const message = await response.json();
-
-    if (!response.ok) {
-        throw new Error(message.msg || "Errore sconosciuto");
-    }
-
-    return message;
+    return { data, mutate, isError: error, isLoading };
 }
 
 export async function deleteUser(id) {
