@@ -37,7 +37,7 @@ export function usePostsByOwner(body) {
             }],
         fetcher,
         {
-            refreshInterval: 1500
+            refreshInterval: 4000
         }
     );
 
@@ -48,7 +48,7 @@ export function useAllPosts() {
 
     const { data, mutate, error, isLoading } = useSWR(
         "http://localhost:3000/api/posts/allPosts", {
-        refreshInterval: 1500
+        refreshInterval: 4000
     }
     );
 
