@@ -22,26 +22,26 @@ export async function addPost(data) {
     return message;
 }
 
-export async function getPostsByOwner(data) {
+export function usePostsByOwner(body) {
 
-    const response = await fetch(
-        "http://localhost:3000/api/posts/getByOwner",
+    const fetcher = ([url, options]) => fetch(url, options).then(res => res.json());
+
+    const { data, mutate, error, isLoading } = useSWR(
+        ["http://localhost:3000/api/posts/getByOwner",
+            {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            }],
+        fetcher,
         {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json',
-            },
-            body: JSON.stringify(data),
+            refreshInterval: 1500
         }
     );
 
-    const message = await response.json();
-
-    if (!response.ok) {
-        throw new Error(message.msg || "Errore sconosciuto");
-    }
-
-    return message;
+    return { data, mutate, isError: error, isLoading };
 }
 
 export function useAllPosts() {

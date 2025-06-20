@@ -15,7 +15,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import DarkMode from '@mui/icons-material/DarkMode';
 import LightMode from '@mui/icons-material/LightMode';
 import { useNavigate } from 'react-router-dom';
-import { changeReplyStatus, deletePost, deleteReply, getPostsByOwner } from '../services/postsService';
+import { changeReplyStatus, deletePost, deleteReply, usePostsByOwner } from '../services/postsService';
 import { Bounce, toast, ToastContainer } from 'react-toastify';
 import { DarkModeContext } from '../darkModeContext';
 import { darkTheme, lightTheme } from '../theme';
@@ -45,6 +45,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import HistoryIcon from '@mui/icons-material/History';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const FireNav = styled(List)({
     '& .MuiListItemButton-root': {
@@ -71,18 +73,27 @@ export default function UserPage() {
     const [openConfirm, setOpenConfirm] = React.useState(false);
     const [postIdToDelete, setPostIdToDelete] = React.useState(null);
 
-    const [posts, setPosts] = React.useState([{
-        id: "",
-        author: '',
-        date: '',
-        title: '',
-        content: ''
-    }]);
+    // const [posts, setPosts] = React.useState([{
+    //     id: "",
+    //     author: '',
+    //     date: '',
+    //     title: '',
+    //     content: ''
+    // }]);
     const navigate = useNavigate();
-    const [sessionStorageValue, setSessionStorageValue] =
+    const [sessionStorageValue] =
         UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
     const [context, setContext] = React.useContext(Context)
     const [isLiked, setIsLiked] = React.useState({});
+
+    const { userName, id: userId } = sessionStorageValue;
+    const request = { owner: userName };
+    const { data, mutate, isError, isLoading } = usePostsByOwner(request);
+
+    const posts = React.useMemo(() => {
+        return data?.post
+    }, [data?.post]);
+
     // Sets the search value to whatever is typed in the text field
     const handleChange = (event) => {
         setSearch(event.target.value);
@@ -100,7 +111,7 @@ export default function UserPage() {
         navigate("/login");
     };
 
-    // Navigates to the page displaying all users' data
+    // Navigates to the page displaying all users' fetchData
     const editAll = () => {
         setOpen(false);
         navigate("/usersData", { replace: true });
@@ -147,7 +158,7 @@ export default function UserPage() {
     };
 
     // Defines the icon list for the options menu
-    const data = [
+    const fetchData = [
         { icon: <EditIcon />, label: 'Edit account', onClick: editSelf },
         { icon: <ViewListIcon />, label: 'Edit all accounts', onClick: editAll },
         { icon: <PostAddIcon />, label: 'Post something', onClick: goToPostPage },
@@ -158,7 +169,7 @@ export default function UserPage() {
     ];
 
     // Filters out the "Edit all accounts" option if the user is not a manager
-    const filteredData = data.filter(item => {
+    const filteredData = fetchData.filter(item => {
         if (item.label === 'Edit all accounts') {
             return sessionStorageValue?.role === 'manager';
         }
@@ -176,22 +187,22 @@ export default function UserPage() {
 
         for (const post of posts) {
             try {
-                const data = {
+                const fetchData = {
                     userId: userId,
                     postId: post.id
                 };
 
-                const status = await checkIfLiked(data);
+                const status = await checkIfLiked(fetchData);
                 tempIsLiked[post.id] = status.state;
 
                 for (const reply of post.reply) {
                     try {
-                        const data = {
+                        const fetchData = {
                             userId: userId,
                             postId: reply.id
                         };
 
-                        const status = await checkIfLiked(data);
+                        const status = await checkIfLiked(fetchData);
                         tempIsLiked[reply.id] = status.state;
 
                     } catch (err) {
@@ -210,22 +221,17 @@ export default function UserPage() {
     ;
 
 
-    const { userName, id: userId } = sessionStorageValue;
+
+
+
     // Loads user posts when the page is first rendered or when the theme changes
     React.useEffect(() => {
-        const request = { owner: userName };
+
         setdarkModeContext(isDarkMode ? darkTheme : lightTheme);
 
-        getPostsByOwner(request)
-            .then((receivedPosts) => {
-                setPosts(receivedPosts.post);
-                initializeIsLiked(userId, receivedPosts.post);
-            })
-            .catch((error) => {
-                toast.error("Error during data gathering");
-                console.error(error);
-            });
-    }, [userName, isDarkMode, userId, setdarkModeContext]);
+        initializeIsLiked(userId, data?.post);
+
+    }, [isDarkMode, userId, setdarkModeContext, data?.post]);
 
 
     // Defines the defaul user needed if the user deletes the account
@@ -259,7 +265,7 @@ export default function UserPage() {
                 navigate("/login");
             })
             .catch((error) => {
-                toast.error("Error during data gathering");
+                toast.error("Error during fetchData gathering");
                 console.error(error);
             });
 
@@ -276,12 +282,12 @@ export default function UserPage() {
     const handleDelete = React.useCallback(() => {
         if (!postIdToDelete) return;
 
-        const data = {
-            owner: sessionStorageValue.userName,
+        const fetchData = {
+            owner: userName,
             id: postIdToDelete
         };
 
-        deletePost(data)
+        deletePost(fetchData)
             .then((response) => {
                 toast.success(response.msg, {
                     position: "top-right",
@@ -289,7 +295,7 @@ export default function UserPage() {
                     theme: "colored",
                     transition: Bounce,
                 });
-                setPosts(response.posts); // Updates the posts list with the newly fetched one
+                mutate(); // Updates the posts list with the newly fetched one
             })
             .catch((error) => {
                 console.error(error);
@@ -300,15 +306,15 @@ export default function UserPage() {
                 setOpenConfirm(false);
                 setPostIdToDelete(null);
             });
-    }, [postIdToDelete, sessionStorageValue.userName]);
+    }, [mutate, postIdToDelete, userName]);
 
     // Changes the visibility status of a reply
     const changeVisibility = React.useCallback((id, owner) => {
-        const data = {
+        const fetchData = {
             id: id,
             owner: owner
         }
-        changeReplyStatus(data)
+        changeReplyStatus(fetchData)
             .then((response) => {
                 toast.success(response.msg, {
                     position: "top-right",
@@ -316,22 +322,22 @@ export default function UserPage() {
                     theme: "colored",
                     transition: Bounce,
                 });
-                setPosts(response.posts); // Updates the posts list with the newly fetched one
+                mutate(); // Updates the posts list with the newly fetched one
             })
             .catch((error) => {
                 console.error(error);
                 toast.error(error);
             })
-    }, [])
+    }, [mutate])
 
     // deletes the selected reoky
     const removeReply = React.useCallback((id, owner) => {
-        const data = {
+        const fetchData = {
             id: id,
             owner: owner,
             pageName: "userPage"
         }
-        deleteReply(data)
+        deleteReply(fetchData)
             .then((response) => {
                 toast.success(response.msg, {
                     position: "top-right",
@@ -339,34 +345,24 @@ export default function UserPage() {
                     theme: "colored",
                     transition: Bounce,
                 });
-                setPosts(response.posts); // Updates the posts list with the newly fetched one
+                mutate(); // Updates the posts list with the newly fetched one
             })
             .catch((error) => {
                 console.error(error);
                 toast.error(error);
             })
-    }, [])
+    }, [mutate])
 
     const like = React.useCallback((postId) => {
         // Logica per aggiungere like al post
         setIsLiked(prev => ({ ...prev, [postId]: true }));
-        const data = {
+        const fetchData = {
             userId: sessionStorageValue.id,
             postId: postId
         }
-        likePost(data)
+        likePost(fetchData)
             .then((response) => {
-                const request = {
-                    owner: sessionStorageValue?.userName
-                };
-                getPostsByOwner(request) // Fetches posts owned by the current user
-                    .then((receivedPosts) => {
-                        setPosts(receivedPosts.post); // Updates the post list
-                    })
-                    .catch((error) => {
-                        toast.error("Error during data gathering");
-                        console.error(error);
-                    });
+                mutate();
                 toast.success(response.msg, {
                     position: "top-right",
                     autoClose: 5000,
@@ -378,28 +374,18 @@ export default function UserPage() {
                 console.error(error);
                 toast.error(error);
             })
-    }, [sessionStorageValue.id, sessionStorageValue?.userName])
+    }, [mutate, sessionStorageValue.id])
 
     const dislike = React.useCallback((postId) => {
         // Logica per aggiungere like al post
         setIsLiked(prev => ({ ...prev, [postId]: false }));
-        const data = {
+        const fetchData = {
             userId: sessionStorageValue.id,
             postId: postId
         }
-        dislikePost(data)
+        dislikePost(fetchData)
             .then((response) => {
-                const request = {
-                    owner: sessionStorageValue?.userName
-                };
-                getPostsByOwner(request) // Fetches posts owned by the current user
-                    .then((receivedPosts) => {
-                        setPosts(receivedPosts.post); // Updates the post list
-                    })
-                    .catch((error) => {
-                        toast.error("Error during data gathering");
-                        console.error(error);
-                    });
+                mutate();
                 toast.success(response.msg, {
                     position: "top-right",
                     autoClose: 5000,
@@ -411,7 +397,25 @@ export default function UserPage() {
                 console.error(error);
                 toast.error(error);
             })
-    }, [sessionStorageValue.id, sessionStorageValue?.userName])
+    }, [mutate, sessionStorageValue.id])
+
+
+    if (isError) {
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <Alert severity='error'>Failed to load posts.</Alert>
+            </ThemeProvider>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
 
     return (
         // Sets the theme based on the current context
@@ -450,7 +454,7 @@ export default function UserPage() {
                                 sx={{
                                     my: 0
                                 }}
-                                primary={sessionStorageValue.userName || 'User'}
+                                primary={userName || 'User'}
                                 slotProps={{
                                     primary: {
                                         fontSize: 20,
@@ -597,7 +601,7 @@ export default function UserPage() {
                 >
                     {/* Greeting text displayed at the top */}
                     <h1>
-                        Hi, {sessionStorageValue.userName || 'user'}!
+                        Hi, {userName || 'user'}!
                     </h1>
                     <h2>
                         Here are all your posts
@@ -884,7 +888,7 @@ export default function UserPage() {
                                                                 backgroundColor: 'transparent',
                                                                 color: darkModeContext.palette.primary.main,
                                                                 fontWeight: '600',
-                                                                display: r.owner === sessionStorageValue.userName ? 'flex' : "none",
+                                                                display: r.owner === userName ? 'flex' : "none",
                                                                 alignItems: 'center',
                                                                 marginLeft: 'auto',
                                                                 margin: 2
