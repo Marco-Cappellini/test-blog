@@ -73,13 +73,6 @@ export default function UserPage() {
     const [openConfirm, setOpenConfirm] = React.useState(false);
     const [postIdToDelete, setPostIdToDelete] = React.useState(null);
 
-    // const [posts, setPosts] = React.useState([{
-    //     id: "",
-    //     author: '',
-    //     date: '',
-    //     title: '',
-    //     content: ''
-    // }]);
     const navigate = useNavigate();
     const [sessionStorageValue] =
         UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
