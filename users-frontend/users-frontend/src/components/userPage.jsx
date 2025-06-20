@@ -76,6 +76,7 @@ export default function UserPage() {
     const navigate = useNavigate();
     const [sessionStorageValue] =
         UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
+    // eslint-disable-next-line no-unused-vars
     const [context, setContext] = React.useContext(Context)
     const [isLiked, setIsLiked] = React.useState({});
 
