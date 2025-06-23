@@ -74,7 +74,7 @@ export default function UserPage() {
     const [postIdToDelete, setPostIdToDelete] = React.useState(null);
 
     const navigate = useNavigate();
-    const [sessionStorageValue] =
+    const [sessionStorageValue, setSessionStorageValue] =
         UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
     // eslint-disable-next-line no-unused-vars
     const [context, setContext] = React.useContext(Context)
@@ -102,8 +102,11 @@ export default function UserPage() {
 
     // Navigates to the login page
     const goToLogin = () => {
+        sessionStorage.removeItem("UserData"); 
+        setContext(null);
         navigate("/login");
     };
+
 
     // Navigates to the page displaying all users' fetchData
     const editAll = () => {
@@ -213,11 +216,6 @@ export default function UserPage() {
         setIsLiked(tempIsLiked);
     };
     ;
-
-
-
-
-
     // Loads user posts when the page is first rendered or when the theme changes
     React.useEffect(() => {
 
@@ -228,13 +226,7 @@ export default function UserPage() {
     }, [isDarkMode, userId, setdarkModeContext, data?.post]);
 
 
-    // Defines the defaul user needed if the user deletes the account
-    const defaultUser = {
-        userName: "",
-        id: "",
-        email: "",
-        role: ""
-    };
+
 
     // Deletes the current user when the corresponding dialog button is pressed
     const handleConfirmDelete = () => {
@@ -255,8 +247,7 @@ export default function UserPage() {
                     theme: "colored",
                     transition: Bounce,
                 });
-                setContext(defaultUser); // Resets the user context to default, clearing session storage when navigating to the login page
-                navigate("/login");
+                goToLogin();
             })
             .catch((error) => {
                 toast.error("Error during fetchData gathering");

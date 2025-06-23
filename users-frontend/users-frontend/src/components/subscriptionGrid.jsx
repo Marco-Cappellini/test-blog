@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -30,7 +30,6 @@ export default function SubscriptionForm(/*{ onSwitchForm }*/) {
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [role, setRole] = useState("employee");
-  const [context, setContext] = useContext(Context);
 
   const {
     register,
@@ -62,7 +61,6 @@ export default function SubscriptionForm(/*{ onSwitchForm }*/) {
           theme: "colored",
           transition: Bounce,
         });
-        setContext(user.user)
       })
       .catch((error) => {
         const errorMessage = error.message || "Errore generico";

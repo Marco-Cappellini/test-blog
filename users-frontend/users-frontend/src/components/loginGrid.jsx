@@ -38,17 +38,14 @@ export const UseSessionStorage = (key, initialValue) => {
 };
 
 export default function LoginForm() {
-    const defaultUser = { userName: "", id: "", email: "", role: "" };
     const [theme] = useContext(DarkModeContext);
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
 
     const [context, setContext] = useContext(Context);
     const [sessionStorageValue, setSessionStorageValue] =
-        UseSessionStorage("UserData", defaultUser);
+        UseSessionStorage("UserData", null);
 
-    // Inizializzo React Hook Form senza defaultValues fissi
-    // perchè li gestiamo col reset dopo
     const {
         register,
         handleSubmit,
@@ -56,17 +53,16 @@ export default function LoginForm() {
         reset,
     } = useForm();
 
-    // Ogni volta che sessionStorageValue cambia, resetto i valori del form
+
     useEffect(() => {
         if (sessionStorageValue)
-            reset(sessionStorageValue);
-    }, [sessionStorageValue, reset]);
+            navigate("/userPage")
+    }, [sessionStorageValue, reset, navigate]);
 
     const goToSubscription = useCallback(() => {
         navigate("/");
     }, [navigate]);
 
-    // Sincronizzo sessionStorageValue con context (attenzione: potrebbe creare loop se context cambia spesso)
     useEffect(() => {
         setSessionStorageValue(context);
     }, [context, setSessionStorageValue]);
