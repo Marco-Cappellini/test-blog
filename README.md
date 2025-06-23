@@ -62,6 +62,7 @@ Before running the project, make sure you have:
 11. Open your browser and copy the fist page url <div>
    By default it should be localhost:3000
 
+>Note: For testing changes, you need to built the project again or start the frontend separately (**npm run dev** in the frontend route ), using the link that Vite provides in the terminal
 # Demo
 ### This is how the program should look like after you started it and clicked on the login button (bottom of the first page)
 <div>
