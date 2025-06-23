@@ -49,7 +49,6 @@ export default function LikedPage() {
     const [darkModeContext] = React.useContext(DarkModeContext);
     const [expandedPosts, setExpandedPosts] = React.useState({});
     const [isLiked, setIsLiked] = React.useState({});
-    // const [posts, setPosts] = React.useState([]);
     const navigate = useNavigate();
     const [search, setSearch] = React.useState("")
     const [sessionStorageValue] =
