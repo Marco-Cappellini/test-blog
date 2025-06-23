@@ -63,7 +63,7 @@ export default function LoginForm() {
     }, [sessionStorageValue, reset]);
 
     const goToSubscription = useCallback(() => {
-        navigate("/", { replace: true });
+        navigate("/");
     }, [navigate]);
 
     // Sincronizzo sessionStorageValue con context (attenzione: potrebbe creare loop se context cambia spesso)
@@ -89,7 +89,7 @@ export default function LoginForm() {
                     setContext(user.user);
                     setSessionStorageValue(user.user);
                     setTimeout(() => {
-                        navigate("/userPage", { replace: true });
+                        navigate("/userPage");
                     }, 200);
                 })
                 .catch((error) => {

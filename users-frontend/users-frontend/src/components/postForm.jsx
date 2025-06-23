@@ -36,7 +36,7 @@ export default function PostCreation() {
         addPost(postData)
             .then((post) => {
                 toast.info(post.msg || "Post added");
-                navigate("/userPage", { replace: true });
+                navigate("/userPage");
             })
             .catch((error) => {
                 toast.error(error.message || "Errore generico");

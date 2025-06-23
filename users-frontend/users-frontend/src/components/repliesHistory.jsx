@@ -44,7 +44,7 @@ export default function RepliesHistoryPage() {
     const goToReply = (id) => {
         let url = "/reply/" + id;
         console.log(url);
-        navigate(url, { replace: true });
+        navigate(url);
     };
 
     const { id: userId } = sessionStorageValue;

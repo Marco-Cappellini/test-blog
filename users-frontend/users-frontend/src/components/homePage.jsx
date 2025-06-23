@@ -38,7 +38,7 @@ export default function HomePage() {
     const goToReply = (id) => {
         let url = "/reply/" + id;
         console.log(url);
-        navigate(url, { replace: true });
+        navigate(url);
     };
 
     const { data, mutate, isError, isLoading } = useAllPosts();

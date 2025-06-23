@@ -81,7 +81,7 @@ export default function SubscriptionForm(/*{ onSwitchForm }*/) {
   };
 
   const goToLogin = () => {
-    navigate("/login", { replace: true });
+    navigate("/login");
   };
 
   return (

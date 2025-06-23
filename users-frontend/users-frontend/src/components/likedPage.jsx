@@ -62,7 +62,7 @@ export default function LikedPage() {
     const goToReply = (id) => {
         let url = "/reply/" + id;
         console.log(url);
-        navigate(url, { replace: true });
+        navigate(url);
     };
 
     const { id: userId } = sessionStorageValue;

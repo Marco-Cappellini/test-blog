@@ -94,15 +94,15 @@ export default function UpdateUserForm() {
     );
 
     const goToLogin = () => {
-        navigate("/login", { replace: true });
+        navigate("/login");
     };
 
     const goToUserPage = () => {
-        navigate("/userPage", { replace: true });
+        navigate("/userPage");
     };
 
     const returnToGrid = useCallback(() => {
-        navigate("/usersData", { replace: true });
+        navigate("/usersData");
     }, [navigate]);
 
     return (

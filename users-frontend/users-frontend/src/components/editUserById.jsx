@@ -67,7 +67,7 @@ export default function EditUserForm() {
 
     const [theme] = useContext(DarkModeContext);
     const goToUserPage = () => {
-        navigate("/userPage", { replace: true });
+        navigate("/userPage");
     };
 
     const reciveSubmit = useCallback((data) => {
@@ -113,11 +113,11 @@ export default function EditUserForm() {
     }, [user?.userName, user?.email, user?.fullName, mutate]);
 
     const goToLogin = () => {
-        navigate("/login", { replace: true });
+        navigate("/login");
     };
 
     const returnToGrid = useCallback(() => {
-        navigate(("/usersData"), { replace: true });
+        navigate(("/usersData"));
     }, [navigate])
 
 

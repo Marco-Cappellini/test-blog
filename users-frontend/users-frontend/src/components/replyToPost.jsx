@@ -46,7 +46,7 @@ export default function Reply() {
         addReply(replyData, id)
             .then((res) => {
                 toast.info(res.msg || "Reply added");
-                navigate("/userPage", { replace: true });
+                navigate("/userPage");
             })
             .catch((error) => {
                 toast.error(error.message || "Errore generico");

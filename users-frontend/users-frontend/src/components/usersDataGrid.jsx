@@ -118,7 +118,7 @@ export default function UsersDataGrid() {
     ];
 
     const handleGoBack = useCallback(() => {
-        navigate("/userPage", { replace: true });
+        navigate("/userPage");
     }, [navigate]);
 
 

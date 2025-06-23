@@ -108,35 +108,35 @@ export default function UserPage() {
     // Navigates to the page displaying all users' fetchData
     const editAll = () => {
         setOpen(false);
-        navigate("/usersData", { replace: true });
+        navigate("/usersData");
     };
 
     // Navigates to the page for editing the user's own account
     const editSelf = () => {
         setOpen(false);
-        navigate("/updateUser", { replace: true });
+        navigate("/updateUser");
     };
 
     // Navigates to the post creation page
     const goToPostPage = () => {
         setOpen(false);
-        navigate("/post", { replace: true });
+        navigate("/post");
     };
 
     const goToRepliesHistory = () => {
         setOpen(false);
-        navigate("/repliesHistory", { replace: true });
+        navigate("/repliesHistory");
     };
 
     const goToLikedPage = () => {
         setOpen(false);
-        navigate("/allLiked", { replace: true });
+        navigate("/allLiked");
     };
 
     // Navigates to the page displaying all posts
     const goToHomePage = () => {
         setOpen(false);
-        navigate("/homePage", { replace: true });
+        navigate("/homePage");
     };
 
     // Stores the ID of the user to be deleted and opens the confirmation dialog
@@ -173,7 +173,7 @@ export default function UserPage() {
     // Navigates to the reply page for a specific post
     const goToReply = (id) => {
         const url = "/reply/" + id;
-        navigate(url, { replace: true });
+        navigate(url);
     };
     // Initializes the isLiked state for all the posts and replies
     const initializeIsLiked = async (userId, posts) => {
