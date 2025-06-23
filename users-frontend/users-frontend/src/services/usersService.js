@@ -1,9 +1,11 @@
 import useSWR from "swr"
 
+const endpoint = import.meta.env.VITE_ENDPOINT
+
 export async function login(data) {
 
     const response = await fetch(
-        `${import.meta.env.VITE_ENDPOINT}/api/users/login`,
+        `${endpoint}/api/users/login`,
         {
             method: 'POST',
             headers: {
@@ -25,7 +27,7 @@ export async function login(data) {
 export async function updateUser(data) {
 
     const response = await fetch(
-        "http://localhost:3000/api/users/update",
+        `${endpoint}/api/users/update`,
         {
             method: 'PUT',
             headers: {
@@ -47,7 +49,7 @@ export async function updateUser(data) {
 export async function managerUpdate(data) {
 
     const response = await fetch(
-        "http://localhost:3000/api/users/managerUpdate",
+        `${endpoint}/api/users/managerUpdate`,
         {
             method: 'PUT',
             headers: {
@@ -69,7 +71,7 @@ export async function managerUpdate(data) {
 export async function subscribe(data) {
 
     const response = await fetch(
-        "http://localhost:3000/api/users/subscribe",
+        `${endpoint}/api/users/subscribe`,
         {
             method: 'POST',
             headers: {
@@ -91,7 +93,7 @@ export async function subscribe(data) {
 export function useAllUsers() {
 
     const { data, mutate, error, isLoading } = useSWR(
-        "http://localhost:3000/api/users/"
+        `${endpoint}/api/users/`
     );
 
     return { data, mutate, isError: error, isLoading };
@@ -100,7 +102,7 @@ export function useAllUsers() {
 export function useUserById(id) {
 
     const { data, mutate, error, isLoading } = useSWR(
-        `http://localhost:3000/api/users/${id}`
+        `${endpoint}/api/users/${id}`
     );
 
     return { data, mutate, isError: error, isLoading };
@@ -109,7 +111,7 @@ export function useUserById(id) {
 export async function deleteUser(id) {
 
     const response = await fetch(
-        `http://localhost:3000/api/users/${id}`,
+        `${endpoint}/api/users/${id}`,
         {
             method: 'DELETE'
         }
@@ -127,7 +129,7 @@ export async function deleteUser(id) {
 export async function likePost(data) {
 
     const response = await fetch(
-        "http://localhost:3000/api/users/like",
+        `${endpoint}/api/users/like`,
         {
             method: 'POST',
             headers: {
@@ -149,7 +151,7 @@ export async function likePost(data) {
 export async function dislikePost(data) {
 
     const response = await fetch(
-        "http://localhost:3000/api/users/dislike",
+        `${endpoint}/api/users/dislike`,
         {
             method: 'POST',
             headers: {
@@ -171,7 +173,7 @@ export async function dislikePost(data) {
 export async function checkIfLiked(data) {
 
     const response = await fetch(
-        "http://localhost:3000/api/users/checkIfLiked",
+        `${endpoint}/api/users/checkIfLiked`,
         {
             method: 'POST',
             headers: {

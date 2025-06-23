@@ -1,9 +1,11 @@
 import useSWR from "swr"
 
+const endpoint = import.meta.env.VITE_ENDPOINT
+
 export async function addPost(data) {
 
     const response = await fetch(
-        "http://localhost:3000/api/posts/post",
+        `${endpoint}/api/posts/post`,
         {
             method: 'POST',
             headers: {
@@ -27,7 +29,7 @@ export function usePostsByOwner(body) {
     const fetcher = ([url, options]) => fetch(url, options).then(res => res.json());
 
     const { data, mutate, error, isLoading } = useSWR(
-        ["http://localhost:3000/api/posts/getByOwner",
+        [`${endpoint}/api/posts/getByOwner`,
             {
                 method: 'POST',
                 headers: {
@@ -47,7 +49,7 @@ export function usePostsByOwner(body) {
 export function useAllPosts() {
 
     const { data, mutate, error, isLoading } = useSWR(
-        "http://localhost:3000/api/posts/allPosts", {
+        `${endpoint}/api/posts/allPosts`, {
         refreshInterval: 4000
     }
     );
@@ -58,7 +60,7 @@ export function useAllPosts() {
 export function usePostById(id) {
 
     const { data, mutate, error, isLoading } = useSWR(
-        `http://localhost:3000/api/posts/postById/${id}`
+        `${endpoint}/api/posts/postById/${id}`
     );
 
     return { data, mutate, isError: error, isLoading };
@@ -67,7 +69,7 @@ export function usePostById(id) {
 export async function addReply(data, id) {
 
     const response = await fetch(
-        `http://localhost:3000/api/posts/reply/${id}`, {
+        `${endpoint}/api/posts/reply/${id}`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -88,7 +90,7 @@ export async function addReply(data, id) {
 export async function deletePost(data) {
 
     const response = await fetch(
-        `http://localhost:3000/api/posts/deletePost`, {
+        `${endpoint}/api/posts/deletePost`, {
         method: 'DELETE',
         headers: {
             'content-type': 'application/json',
@@ -109,7 +111,7 @@ export async function deletePost(data) {
 export async function changeReplyStatus(data) {
 
     const response = await fetch(
-        `http://localhost:3000/api/posts/changeReplyStatus`, {
+        `${endpoint}/api/posts/changeReplyStatus`, {
         method: 'PUT',
         headers: {
             'content-type': 'application/json',
@@ -130,7 +132,7 @@ export async function changeReplyStatus(data) {
 export async function deleteReply(data) {
 
     const response = await fetch(
-        `http://localhost:3000/api/posts/deleteReply`, {
+        `${endpoint}/api/posts/deleteReply`, {
         method: 'DELETE',
         headers: {
             'content-type': 'application/json',
@@ -151,7 +153,7 @@ export async function deleteReply(data) {
 export function useRepliesByOwner(id) {
 
     const { data, mutate, error, isLoading } = useSWR(
-        `http://localhost:3000/api/posts/getReplyByOwner/${id}`
+        `${endpoint}/api/posts/getReplyByOwner/${id}`
     );
 
     return { data, mutate, isError: error, isLoading };
@@ -160,7 +162,7 @@ export function useRepliesByOwner(id) {
 export function useAllLiked(id) {
 
     const { data, mutate, error, isLoading } = useSWR(
-        `http://localhost:3000/api/posts/getAllLiked/${id}`
+        `${endpoint}/api/posts/getAllLiked/${id}`
     );
 
     return { data, mutate, isError: error, isLoading };

@@ -54,10 +54,11 @@ Before running the project, make sure you have:
     cp .env.example .env
     ```
     ⚠ When filling the file be sure that the port is the same as the one in the .env of the frontend ⚠ 
+
 10. Start the project:
-   ```bash
-   node index.js
-   ```
+    ```bash
+    node index.js
+    ```
 11. Open your browser and copy the fist page url <div>
    By default it should be localhost:3000
 
@@ -72,7 +73,9 @@ Before running the project, make sure you have:
 * *Username:* TestManager1
 * *Password:* Password123123
 
-⚠ If you sign up as an employee, you won’t have access to the "Edit All Accounts" page. ⚠
+ ⚠ After testing, **change the salt** in your `.env` file to keep your app secure. ⚠
+
+> Note: Signing up as an *employee* won't give access to the **Edit All Accounts** page.
 
 ## License
 
