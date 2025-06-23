@@ -55,17 +55,13 @@ export default function LoginForm() {
 
 
     useEffect(() => {
-        if (sessionStorageValue)
+        if (sessionStorageValue && sessionStorageValue!=null)
             navigate("/userPage")
     }, [sessionStorageValue, reset, navigate]);
 
     const goToSubscription = useCallback(() => {
         navigate("/");
     }, [navigate]);
-
-    useEffect(() => {
-        setSessionStorageValue(context);
-    }, [context, setSessionStorageValue]);
 
     const reciveSubmit = useCallback(
         (data) => {
@@ -146,7 +142,6 @@ export default function LoginForm() {
                                     id="userName"
                                     label="UserName"
                                     variant="outlined"
-                                    // NON mettere value o defaultValue, lascia gestire React Hook Form
                                     {...register("userName", { required: true })}
                                 />
                                 {errors.userName && (

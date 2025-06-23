@@ -74,13 +74,20 @@ export default function UserPage() {
     const [postIdToDelete, setPostIdToDelete] = React.useState(null);
 
     const navigate = useNavigate();
-    const [sessionStorageValue, setSessionStorageValue] =
-        UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
+    const [sessionStorageValue] =
+        UseSessionStorage('UserData');
     // eslint-disable-next-line no-unused-vars
     const [context, setContext] = React.useContext(Context)
     const [isLiked, setIsLiked] = React.useState({});
 
-    const { userName, id: userId } = sessionStorageValue;
+    React.useEffect(() => {
+
+        if (!sessionStorageValue || sessionStorageValue === null)
+            navigate("/login")
+
+    }, [navigate, sessionStorageValue])
+
+    const { userName, id: userId } = sessionStorageValue ? sessionStorageValue : { userName: "Default", id: "0" };
     const request = { owner: userName };
     const { data, mutate, isError, isLoading } = usePostsByOwner(request);
 
@@ -102,7 +109,7 @@ export default function UserPage() {
 
     // Navigates to the login page
     const goToLogin = () => {
-        sessionStorage.removeItem("UserData"); 
+        sessionStorage.removeItem("UserData");
         setContext(null);
         navigate("/login");
     };
@@ -223,7 +230,7 @@ export default function UserPage() {
 
         initializeIsLiked(userId, data?.post);
 
-    }, [isDarkMode, userId, setdarkModeContext, data?.post]);
+    }, [isDarkMode, userId, setdarkModeContext, data?.post, sessionStorageValue, navigate]);
 
 
 
@@ -342,7 +349,7 @@ export default function UserPage() {
         // Logica per aggiungere like al post
         setIsLiked(prev => ({ ...prev, [postId]: true }));
         const fetchData = {
-            userId: sessionStorageValue.id,
+            userId: sessionStorageValue?.id,
             postId: postId
         }
         likePost(fetchData)
@@ -359,13 +366,13 @@ export default function UserPage() {
                 console.error(error);
                 toast.error(error);
             })
-    }, [mutate, sessionStorageValue.id])
+    }, [mutate, sessionStorageValue?.id])
 
     const dislike = React.useCallback((postId) => {
         // Logica per aggiungere like al post
         setIsLiked(prev => ({ ...prev, [postId]: false }));
         const fetchData = {
-            userId: sessionStorageValue.id,
+            userId: sessionStorageValue?.id,
             postId: postId
         }
         dislikePost(fetchData)
@@ -382,7 +389,7 @@ export default function UserPage() {
                 console.error(error);
                 toast.error(error);
             })
-    }, [mutate, sessionStorageValue.id])
+    }, [mutate, sessionStorageValue?.id])
 
 
     if (isError) {

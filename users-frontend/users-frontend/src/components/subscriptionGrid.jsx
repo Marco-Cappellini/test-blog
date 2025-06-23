@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 import { subscribe } from "../services/usersService.js";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import Switch from "@mui/material/Switch";
-import { Context } from "../context.js";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
