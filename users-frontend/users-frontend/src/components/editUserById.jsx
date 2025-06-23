@@ -17,6 +17,7 @@ import { useParams } from "react-router-dom";
 import { DarkModeContext } from "../darkModeContext.js";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
+import { UseSessionStorage } from "./loginGrid.jsx";
 
 
 
@@ -35,6 +36,8 @@ export default function EditUserForm() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [showNewPassword, setShowNewPassword] = useState(false);
+    const [sessionStorageValue] =
+        UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
 
     const {
         register,
@@ -133,6 +136,15 @@ export default function EditUserForm() {
         return (
             <ThemeProvider theme={theme}>
                 <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
+    if (sessionStorageValue?.role !== "manager" || !sessionStorageValue || sessionStorageValue === null) {
+        navigate("/login")
+        return (
+            <ThemeProvider theme={theme}>
+                <Alert severity='error'>Cannot acces this data</Alert>
             </ThemeProvider>
         )
     }

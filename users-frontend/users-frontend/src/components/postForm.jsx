@@ -28,7 +28,7 @@ export default function PostCreation() {
             minute: '2-digit',
         });
         const postData = {
-            owner: sessionStorageValue.userName,
+            owner: sessionStorageValue?.userName,
             date: formatted,
             title: data.title,
             content: data.content,
@@ -42,6 +42,15 @@ export default function PostCreation() {
                 toast.error(error.message || "Errore generico");
             });
     }, [sessionStorageValue, navigate]);
+
+    if (!sessionStorageValue || sessionStorageValue === null) {
+        navigate("/login")
+        return (
+            <ThemeProvider theme={theme}>
+                <Alert severity='error'>Cannot acces this data</Alert>
+            </ThemeProvider>
+        )
+    }
 
     return (
         <Box

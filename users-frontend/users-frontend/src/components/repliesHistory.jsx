@@ -25,13 +25,6 @@ export default function RepliesHistoryPage() {
     const [darkModeContext] = React.useContext(DarkModeContext);
     const [expandedPosts, setExpandedPosts] = React.useState({});
     const [isLiked, setIsLiked] = React.useState({});
-    // const [posts, setPosts] = React.useState([{
-    //     id: "",
-    //     author: '',
-    //     date: '',
-    //     title: '',
-    //     content: ''
-    // }]);
     const navigate = useNavigate();
     const [search, setSearch] = React.useState("")
     const [sessionStorageValue] =
@@ -181,6 +174,15 @@ export default function RepliesHistoryPage() {
         return (
             <ThemeProvider theme={darkModeContext}>
                 <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
+    if (!sessionStorageValue || sessionStorageValue === null) {
+        navigate("/login")
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <Alert severity='error'>Cannot acces this data</Alert>
             </ThemeProvider>
         )
     }
@@ -453,7 +455,7 @@ export default function RepliesHistoryPage() {
                                                             backgroundColor: 'transparent',
                                                             color: darkModeContext.palette.primary.main,
                                                             fontWeight: '600',
-                                                            display: r.owner === sessionStorageValue.userName ? 'flex' : 'none',
+                                                            display: r.owner === sessionStorageValue?.userName ? 'flex' : 'none',
                                                             alignItems: 'center',
                                                         }}
                                                         onClick={() => removeReply(r.id, post.owner)}

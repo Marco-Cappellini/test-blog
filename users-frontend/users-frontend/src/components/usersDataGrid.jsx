@@ -17,12 +17,15 @@ import DialogActions from "@mui/material/DialogActions";
 import { ThemeProvider } from "@emotion/react";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
+import { UseSessionStorage } from "./loginGrid";
 
 
 export default function UsersDataGrid() {
     const [theme] = useContext(DarkModeContext);
     const [open, setOpen] = useState(false);
     const [idToDelete, setIdToDelete] = useState(null);
+    const [sessionStorageValue] =
+        UseSessionStorage('UserData');
 
     const navigate = useNavigate();
 
@@ -134,6 +137,15 @@ export default function UsersDataGrid() {
         return (
             <ThemeProvider theme={theme}>
                 <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
+    if (sessionStorageValue?.role !== "manager" || !sessionStorageValue || sessionStorageValue === null) {
+        navigate("/login")
+        return (
+            <ThemeProvider theme={theme}>
+                <Alert severity='error'>Cannot acces this data</Alert>
             </ThemeProvider>
         )
     }

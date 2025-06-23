@@ -30,7 +30,7 @@ export default function HomePage() {
     const [search, setSearch] = React.useState("")
     const [sessionStorageValue] =
         UseSessionStorage('UserData', { userName: "", id: "", email: "", role: "" });
-        
+
     const handleChange = (event) => {
         setSearch(event.target.value);
     };
@@ -175,6 +175,15 @@ export default function HomePage() {
         return (
             <ThemeProvider theme={darkModeContext}>
                 <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
+    if (!sessionStorageValue || sessionStorageValue === null) {
+        navigate("/login")
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <Alert severity='error'>Cannot acces this data</Alert>
             </ThemeProvider>
         )
     }
@@ -447,7 +456,7 @@ export default function HomePage() {
                                                             backgroundColor: 'transparent',
                                                             color: darkModeContext.palette.primary.main,
                                                             fontWeight: '600',
-                                                            display: r.owner === sessionStorageValue.userName ? 'flex' : 'none',
+                                                            display: r.owner === sessionStorageValue?.userName ? 'flex' : 'none',
                                                             alignItems: 'center',
                                                         }}
                                                         onClick={() => removeReply(r.id, post.owner)}

@@ -165,6 +165,15 @@ export default function LikedPage() {
         )
     }
 
+    if (!sessionStorageValue || sessionStorageValue === null) {
+        navigate("/login")
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <Alert severity='error'>Cannot acces this data</Alert>
+            </ThemeProvider>
+        )
+    }
+
     return (
         <ThemeProvider theme={darkModeContext}>
             <Box
@@ -432,7 +441,7 @@ export default function LikedPage() {
                                                             backgroundColor: 'transparent',
                                                             color: darkModeContext.palette.primary.main,
                                                             fontWeight: '600',
-                                                            display: r.owner === sessionStorageValue.userName ? 'flex' : 'none',
+                                                            display: r.owner === sessionStorageValue?.userName ? 'flex' : 'none',
                                                             alignItems: 'center',
                                                         }}
                                                         onClick={() => removeReply(r.id, post.owner)}

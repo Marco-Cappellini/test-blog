@@ -39,7 +39,7 @@ export default function Reply() {
             minute: '2-digit',
         });
         const replyData = {
-            owner: sessionStorageValue.userName,
+            owner: sessionStorageValue?.userName,
             date: formatted,
             content: data.content,
         };
@@ -65,6 +65,15 @@ export default function Reply() {
         return (
             <ThemeProvider theme={darkModeContext}>
                 <CircularProgress />
+            </ThemeProvider>
+        )
+    }
+
+    if (!sessionStorageValue || sessionStorageValue === null) {
+        navigate("/login")
+        return (
+            <ThemeProvider theme={darkModeContext}>
+                <Alert severity='error'>Cannot acces this data</Alert>
             </ThemeProvider>
         )
     }
